@@ -13,7 +13,7 @@ Now go back to `main.py` file. Paste the config you copied to `firebaseConfig`. 
 ![image](https://github.com/Taiga-chann/Local-Website-for-data-visualization/assets/90364299/557d3995-8773-4769-a3ef-b1e92f9632c6)\
 If you want to learn more about the Mqtt configuration on flask app, read the [documentation](https://flask-mqtt.readthedocs.io/en/latest/).\
 You also need to go to template\index.html, find `firebaseConfig` and change the configuration like in the `main.py` file.\
-Now you done. Here is a little demo\
+Now you done. Here is a little demo
 
 https://github.com/Taiga-chann/Local-Website-for-data-visualization/assets/90364299/4e217907-53c8-4bb7-9fc7-816b0ea1d5df
 
