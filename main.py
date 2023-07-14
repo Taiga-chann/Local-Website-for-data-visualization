@@ -29,29 +29,29 @@ mqtt = Mqtt(app)
 def hello():
     return render_template('index.html')
 
-# xu ly su kien on_connect
+# Handle on_connect event
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
-    # subscribe cac topic de nhan du lieu
+    # Subscribe to topics to receive data
     mqtt.subscribe('/smarthome/temp')
     mqtt.subscribe('/smarthome/humid')
     mqtt.subscribe('/smarthome/rain')
 
-# xu ly su kien on_message
+# Handle on_message event
 @mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
-    # tao 1 dictionary de luu du lieu gui den
+    # Create a dictionary to save received data
     data = dict(
         topic=message.topic,
         payload=message.payload.decode()
     )
     print (data["topic"],": Data received!\n")
-    # xu ly: khi du lieu duoc gui den topic tuong ung, cap nhat va luu lai tren firebase
+    # When received data, update and save on Firebase realtime database
     if data['topic'] == '/smarthome/temp':
         dataTemp = float(data['payload'])
-        # cap nhat du lieu
+        # Update data
         dataBase.child("Sensor").update({"Temp":dataTemp})
-        # luu du lieu
+        # Save data
         dataBase.child("zData").push({"Temp":dataTemp})
     elif data['topic'] == '/smarthome/humid':
         dataHumid = float(data['payload'])
