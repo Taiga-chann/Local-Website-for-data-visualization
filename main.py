@@ -3,14 +3,14 @@ from flask_mqtt import Mqtt
 import pyrebase
 
 firebaseConfig = {
-    "apiKey": "AIzaSyDs_-trHHhERYIdxGQXTC2X9vOJjgv3De8",
-    "authDomain": "miniproject-4b767.firebaseapp.com",
-    "databaseURL": "https://miniproject-4b767-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "projectId": "miniproject-4b767",
-    "storageBucket": "miniproject-4b767.appspot.com",
-    "messagingSenderId": "881832076020",
-    "appId": "1:881832076020:web:11d52f63169fdb4764b4a1",
-    "measurementId": "G-865J1P1CNZ"
+    "apiKey": "YOUR_CONFIG_ON_FIREBASE",
+    "authDomain": "YOUR_CONFIG_ON_FIREBASE",
+    "databaseURL": "YOUR_CONFIG_ON_FIREBASE",
+    "projectId": "YOUR_CONFIG_ON_FIREBASE",
+    "storageBucket": "YOUR_CONFIG_ON_FIREBASE",
+    "messagingSenderId": "YOUR_CONFIG_ON_FIREBASE",
+    "appId": "YOUR_CONFIG_ON_FIREBASE",
+    "measurementId": "YOUR_CONFIG_ON_FIREBASE"
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
@@ -19,7 +19,7 @@ dataBase = firebase.database()
 app = Flask(__name__)
 app.config['MQTT_BROKER_URL'] = 'mqtt.flespi.io'
 app.config['MQTT_BROKER_PORT'] = 1883
-app.config['MQTT_USERNAME'] = 'dTdnqad1yuqQGMjMk7L36rEDD83IV88WSb789aXvsdbYNiyXfaParhDSfwqYtmI9'
+app.config['MQTT_USERNAME'] = 'PUT_YOUR_TOKEN_HERE'
 app.config['MQTT_PASSWORD'] = ''
 app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 app.config['MQTT_TLS_ENABLED'] = False
