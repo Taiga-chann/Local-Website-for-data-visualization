@@ -1,2 +1,2 @@
 # Local-Website-for-data-visualization
-abc
+Simple website that receive and plot data from Firebase.

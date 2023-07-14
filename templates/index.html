@@ -1,0 +1,216 @@
+<html>
+    <head>
+        <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-database.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.9.0"></script>
+        <style type="text/css">
+            .chart-container {
+                height: 200px;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <h1>SmartHome</h1>
+        <h2>Temperature Chart</h2>
+        <div class="chart-container">
+            <canvas id="chartTemp"></canvas>
+        </div>
+        <h2>Humid Chart</h2>
+        <div class="chart-container">
+            <canvas id="chartHumid"></canvas>
+        </div>
+    <script>
+        // CONNECT DATABASE WITH DETAIL FROM FIREBASE
+        var firebaseConfig = {
+            "apiKey": "AIzaSyDs_-trHHhERYIdxGQXTC2X9vOJjgv3De8",
+            "authDomain": "miniproject-4b767.firebaseapp.com",
+            "databaseURL": "https://miniproject-4b767-default-rtdb.asia-southeast1.firebasedatabase.app",
+            "projectId": "miniproject-4b767",
+            "storageBucket": "miniproject-4b767.appspot.com",
+            "messagingSenderId": "881832076020",
+            "appId": "1:881832076020:web:11d52f63169fdb4764b4a1",
+            "measurementId": "G-865J1P1CNZ"
+          };	
+        // INIT CONNECT WITH APP
+            firebase.initializeApp(firebaseConfig);
+            firebase.analytics();
+        // GET DATA FROM FIREBASE
+            var Temp  = 0;
+            var Humid = 0;
+            var Rain = 0;
+            function getPost() {
+                // LINK WITH DATA temp IN /Temp
+                t = firebase.database().ref("/Sensor/Temp");
+                // GET VALUE IN VARIABLE temp
+                t.once('value', function (messages) {	
+                    result = messages.val();
+                    console.log(result);
+                    Temp = result;
+                });
+                // LINK WITH DATA humid IN /Humid
+                h = firebase.database().ref("/Sensor/Humid");
+                // GET VALUE IN VARIABLE humid
+                h.once('value', function (messages) {	
+                    result = messages.val();
+                    console.log(result);
+                    Humid = result;
+                });
+            }
+        // TIME TO GET VALUE TEMP & HUMID
+            setInterval(function () {
+                getPost();
+            }, 2000)
+    
+        // GET DATA
+            function getTemp() {	
+                console.log(Temp);
+                return Temp;
+            }
+            function getHumid() {	
+                console.log(Humid);
+                return Humid;
+            }
+        // MAKE GRAPH FROM DATA
+            // MAKE GRAPH FOR TEMP
+            function onRefreshTemp(chart) 
+            {
+                var now = Date.now();
+                chart.data.datasets.forEach(function(dataset) {
+                dataset.data.push({
+                    x: now,
+                    y: getTemp()
+                });
+            });
+            }
+        
+            // MAKE GRAPH FOR HUMID
+            function onRefreshHumid(chart) 
+            {
+                var now = Date.now();
+                chart.data.datasets.forEach(function(dataset) {
+                dataset.data.push({
+                    x: now,
+                    y: getHumid()
+                });
+            });
+            }
+    
+    // DEFINE CONFIG
+    // CONFIG FOR CHART TEMP
+    var configTemp = {
+        // CHART FORMAL IS LINE
+        type: 'line',
+        options: {
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+            },
+            scales: {
+                xAxes: [{
+                    type: 'realtime',
+                    realtime: {
+                        // FRAME IN WINDOW = 10s
+                        duration: 10000,
+                        // REFRESH TIME = 3s (APPEAR NEW NODE)
+                        refresh: 3000,
+                        // DELAY FOR APPEAR NEW NODE
+                        delay: 3001,
+                        // GRAPH
+                        onRefresh: onRefreshTemp
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Temp(°C)'
+                    }
+                }]
+            },
+            // TOOLTIPS FOR SHOW RESULT IN BOX WITH NODE NEAREST MOUSE POINTER 
+            tooltips: {
+                mode: 'nearest',
+                intersect: false
+            }
+        }
+    };
+    
+    // CONFIG FOR CHART HUMID
+    // SAME WITH TEMP, DIFFERENT onRefresh
+    var configHumid = {
+        type: 'line',
+        options: {
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+            },
+            scales: {
+                xAxes: [{
+                    type: 'realtime',
+                    realtime: {
+                        duration: 10000,
+                        refresh: 3000,
+                        delay: 3001,
+                        onRefresh: onRefreshHumid
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Humid(%)'
+                    }
+                }]
+            },
+            tooltips: {
+                mode: 'nearest',
+                intersect: false
+            }
+        }
+    };
+
+    // SHOW GRAPH
+    window.onload = function() {
+        // SHOW GRAPH TEMP
+        var ctxTemp = document.getElementById('chartTemp').getContext('2d');
+        window.chartTemp = new Chart(ctxTemp, configTemp);
+        
+        // MAKE UP FOR LINE TEMP 
+        var datasetTemp = {
+            label: '°C ',
+            backgroundColor:  "rgba(150,0,0,1.0)",
+            borderColor:  "rgba(150,0,0,0.4)",
+            fill: false,
+            cubicInterpolationMode: 'monotone',
+            tension: 0.4,
+            data: []
+        };
+        // PUSH DATA TEMP
+        configTemp.data.datasets.push(datasetTemp);
+        // UPDATE NEW CHART TEMP IN WINDOW
+        window.chartTemp.update();
+    
+        // SHOW GRAPH HUMID
+        var ctxHumid = document.getElementById('chartHumid').getContext('2d');
+        window.chartHumid = new Chart(ctxHumid, configHumid);
+        // MAKE UP FOR LINE HUMID
+        var datasetHumid = {
+            label: '%',
+            backgroundColor:  "rgba(0,0,150,1.0)",
+            borderColor:  "rgba(0,0,150,0.4)",
+            fill: false,
+            cubicInterpolationMode: 'monotone',
+            tension: 0.4,
+            data: []
+        };
+        // PUSH DATA HUMID
+        configHumid.data.datasets.push(datasetHumid);
+        // UPDATE NEW CHART HUMID IN WINDOW
+        window.chartHumid.update();
+    };
+    
+    </script>
+    </body>
+</html>
